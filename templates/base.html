@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{title}}</title>
+    <style>
+    h2 {
+      text-align: center;
+    }
+
+    ul {
+      list-style-type: none;
+    }
+
+    .navbar li {
+      display: inline-block;
+      margin: 0 20px;
+    }
+    </style>
+  </head>
+  <body>
+  
+    <nav>
+      <ul class='navbar'>
+          <li><a href="/newpost">Add Post</a></li>
+          <li><a href="/blog">Blog Main</a></li>
+        </ul>
+    </nav>
+    
+    {% block content %}
+
+    {% endblock %}
+  </body>
+</html>
