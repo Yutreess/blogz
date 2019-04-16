@@ -4,15 +4,25 @@
 <h2>Add Blog</h2>
 
 <form action="/blog" method="POST">
-  <label for="">
-    Title:
-    <input type="text" name="title" />
-  </label>
-  <label for="">
-    Body:
-    <textarea name="body" rows="5" cols="40">
-    </textarea>
-  </label>
+<table>
+  <tr>
+    <td>
+      <label for="">
+        Title:
+        <input type="text" name="title" />
+      </label>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <label for="">
+        Body:
+        <textarea name="body" rows="5" cols="40">
+        </textarea>
+      </label>
+    </td>
+  </tr>
+</table>
   <input type="submit" value="Add Blog" />
 </form>
 
