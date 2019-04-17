@@ -63,10 +63,12 @@ def add_post():
 
   # If there's no errors, good to add the post
   else:
+    # Add new post to the Database
     new_post = Blog(post_title, post_body)
     db.session.add(new_post)
     db.session.commit()
-    return redirect("/blog")
+    # Redirect to that blog post
+    return redirect("/blog?id={0}".format(new_post.id))
 
   
 
