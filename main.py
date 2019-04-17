@@ -1,5 +1,6 @@
 from flask import Flask, request, redirect, render_template
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 import re
 
 # App Initialization
@@ -14,9 +15,13 @@ class Blog(db.Model):
   id = db.Column(db.Integer, primary_key=True)
   title = db.Column(db.String(80))
   body = db.Column(db.String(300))
+  post_time = db.Column(db.DateTime)
 
-  def __init__(self, title, body):
+  def __init__(self, title, body, post_time=None):
     self.title = title
+    if post_time is None:
+      post_time = datetime.utcnow()
+    self.post_time = post_time
     self.body = body
 
 # Main Blog page
@@ -30,7 +35,7 @@ def index():
     return render_template("post.html", blog=blog)
   # If there's no query parameter, load all blog posts in a list
   else:
-    blogs = Blog.query.all()
+    blogs = Blog.query.order_by(Blog.post_time.desc()).all()
     return render_template("blog.html", title="Build-A-Blog", blogs=blogs)
 
 # New Post Form
