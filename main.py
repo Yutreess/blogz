@@ -19,17 +19,27 @@ class Blog(db.Model):
     self.title = title
     self.body = body
 
+# Main Blog page
 @app.route('/blog', methods=['POST', 'GET'])
 def index():
-  
-  blogs = Blog.query.all()
-  return render_template("blog.html", title="Build-A-Blog", blogs=blogs)
+  blog_id = request.args.get('id')
 
+  # Find blog id query parameter, and load the blog post
+  if blog_id:
+    blog = Blog.query.filter_by(id=blog_id).all()
+    return render_template("post.html", blog=blog)
+  # If there's no query parameter, load all blog posts in a list
+  else:
+    blogs = Blog.query.all()
+    return render_template("blog.html", title="Build-A-Blog", blogs=blogs)
+
+# New Post Form
 @app.route('/newpost', methods=['GET'])
 def render_form():
 
   return render_template("add-post.html", title="Add Post")
 
+# Process New Post Form
 @app.route('/newpost', methods=['POST'])
 def add_post():
   post_title = request.form['title']

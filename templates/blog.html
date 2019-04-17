@@ -3,9 +3,9 @@
 
 <h2>Blog Entries</h2>
 
-{% for entry in blogs %}
-  <h3>{{entry.title}}</h3>
-  <p>{{entry.body}}</p>
+{% for blog in blogs %}
+  <h3><a href="/blog?id={{blog.id}}">{{blog.title}}</a></h3>
+  <p>{{blog.body}}</p>
 
 {% endfor %}
 
