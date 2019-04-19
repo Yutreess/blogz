@@ -4,7 +4,11 @@
 <h2>Blog Entries</h2>
 
 {% for blog in blogs %}
-  <h3><a href="/blog?id={{blog.id}}">{{blog.title}}</a></h3>
+  <h3>
+    <a href="/blog?id={{blog.id}}">{{blog.title}}</a>
+    |
+    {{blog.post_time}}
+  </h3>
   <p>{{blog.body}}</p>
 
 {% endfor %}

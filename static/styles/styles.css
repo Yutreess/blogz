@@ -1,3 +1,7 @@
+html {
+  background-color: yellow;
+}
+
 h2 {
   text-align: center;
 }
@@ -6,11 +10,24 @@ ul {
   list-style-type: none;
 }
 
-.navbar li {
-  display: inline-block;
-  margin: 0 20px;
+.navbar {
+  text-align: center;
+  top: 0;
 }
+
+.navbar li {
+  color: darkblue;
+  background-color: #a30000;
+  border: 2px solid black;
+  border-radius: 20px;
+  display: inline;
+  padding: 2px 10px;
+  margin: 0 20px;
+  
+}
+
 .error {
   color: red;
   font-weight: bold;
+  text-decoration: underline;
 }
