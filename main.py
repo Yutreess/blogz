@@ -50,6 +50,27 @@ def index():
     blogs = Blog.query.order_by(Blog.post_time.desc()).all()
     return render_template("blog.html", title="Build-A-Blog", blogs=blogs)
 
+# Render Login Page
+@app.route('/login')
+def login():
+  return render_template("login.html", title="Login")
+
+# Process Login Form
+@app.route('/login', methods=['POST'])
+# TODO - write function "def check_login():" to validate form
+
+
+
+# Render Signup Page
+@app.route('/signup')
+def signup():
+  return render_template("signup.html", title="Signup")
+
+# Process Signup Form
+@app.route('/signup', methods=['POST'])
+# TODO - write function "def check_signup():" to validate form
+
+
 # New Post Form
 @app.route('/newpost', methods=['GET'])
 def render_form():
