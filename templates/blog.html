@@ -1,13 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
 
-<nav>
-  <ul class='navbar'>
-      <li><a href="/newpost">Add Post</a></li>
-      <li><a href="/blog">Blog Main</a></li>
-    </ul>
-</nav>
-
 <h2>Blog Entries</h2>
 
 {% for blog in blogs %}
@@ -16,6 +9,9 @@
     |
     {{blog.post_time}}
   </h3>
+  <h4>
+    by {{blog.owner_id}}
+  </h4>
   <p>{{blog.body}}</p>
 
 {% endfor %}

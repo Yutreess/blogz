@@ -19,12 +19,13 @@ class Blog(db.Model):
   post_time = db.Column(db.DateTime)
   owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-  def __init__(self, title, body, post_time=None):
+  def __init__(self, title, body, owner, post_time=None):
     self.title = title
     if post_time is None:
       post_time = datetime.utcnow()
     self.post_time = post_time
     self.body = body
+    self.owner = owner
 
 # User Class
 class User(db.Model):
@@ -37,9 +38,23 @@ class User(db.Model):
     self.username = username
     self.password = password
 
+
+# Default to signup or login page if user is not logged in
+@app.before_request
+def require_login():
+  allowed_routes = ['login', 'check_login',
+    'signup', 'check_signup',
+    'list_blogs', 'index']
+  if request.endpoint not in allowed_routes \
+    and 'username' not in session \
+    and '/static/' not in request.path:
+
+    flash("You need to be logged in to create a post or log out")
+    return redirect('/login')
+
 # Main Blog page
 @app.route('/blog', methods=['POST', 'GET'])
-def index():
+def list_blogs():
   blog_id = request.args.get('id')
 
   # Find blog id query parameter, and load the blog post
@@ -67,9 +82,12 @@ def check_login():
 
   # Get User from database
   user = User.query.filter_by(username=username).first()
-
+  
+  # Check if username is empty
+  if not username:
+    uname_error = 'Please enter a Username'
   # If username and password are correct as in the database
-  if user and user.password == password:
+  elif user and user.password == password:
     session['username'] = username
     flash("Logged in!")
   # If username is in database, but incorrect password
@@ -81,14 +99,20 @@ def check_login():
 
   # Check for any previous errors. Rerender if present.
   if uname_error or password_error:
-    return redirect("/login", title="Login",
+    return render_template("login.html", title="Login",
     username=username,
     uname_error=uname_error, password_error=password_error)
   # If no error messages are present, good to go.
   else:
     return redirect('/newpost')
 
-
+# Log out
+@app.route('/logout')
+def logout():
+  if session['username']:
+    del session['username']
+    flash("Logged Out!")
+    return redirect('/blog')
 
 # Render Signup Page
 @app.route('/signup')
@@ -97,7 +121,6 @@ def signup():
 
 # Process Signup Form
 @app.route('/signup', methods=['POST'])
-# TODO - write function "def check_signup():" to validate form
 def check_signup():
   # Get Form input
   username = request.form['username']
@@ -185,7 +208,6 @@ def check_signup():
 # New Post Form
 @app.route('/newpost', methods=['GET'])
 def render_form():
-
   return render_template("add-post.html", title="Add Post")
 
 # Process New Post Form
@@ -195,6 +217,9 @@ def add_post():
   post_body = request.form['body']
   title_error = ''
   body_error = ''
+
+  # Find Username of poster
+  owner = User.query.filter_by(username=session['username']).first()
 
   # Check if title is empty
   if not post_title:
@@ -213,7 +238,7 @@ def add_post():
   # If there's no errors, good to add the post
   else:
     # Add new post to the Database
-    new_post = Blog(post_title, post_body)
+    new_post = Blog(post_title, post_body, owner)
     db.session.add(new_post)
     db.session.commit()
     # Redirect to that blog post

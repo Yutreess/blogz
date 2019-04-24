@@ -3,6 +3,7 @@
 
 {% for blog in blog %}
 <h2>{{blog.title}}</h2>
+<h4>by {{blog.owner_id}}</h4>
 
 <p>{{blog.body}}</p>
 {% endfor %}
