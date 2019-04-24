@@ -55,16 +55,34 @@ def require_login():
 # Main Blog page
 @app.route('/blog', methods=['POST', 'GET'])
 def list_blogs():
+  # Find Query parameters and arguments
   blog_id = request.args.get('id')
+  userId = request.args.get('userId')
 
   # Find blog id query parameter, and load the blog post
   if blog_id:
     blog = Blog.query.filter_by(id=blog_id).all()
     return render_template("post.html", blog=blog)
+
+  # Find userId, and load posts by user
+  elif userId:
+    blogs = Blog.query.filter_by(owner_id=userId).all()
+    author_username = User.query.filter_by(id=userId).first().username
+    return render_template("blog.html", title="Blogz", blogs=blogs,
+    page_header="Blogs by {0}".format(author_username))
+
   # If there's no query parameter, load all blog posts in a list
   else:
     blogs = Blog.query.order_by(Blog.post_time.desc()).all()
-    return render_template("blog.html", title="Blogz", blogs=blogs)
+    return render_template("blog.html", title="Blogz", page_header="Blog Entries",
+    blogs=blogs)
+
+# Index or "Home" Page
+@app.route('/', methods=['POST', 'GET'])
+def index():
+  # Get all usernames from all accounts
+  users = User.query.order_by(User.username.asc()).all()
+  return render_template("index.html", users=users)
 
 # Render Login Page
 @app.route('/login', methods=['GET'])
@@ -241,6 +259,7 @@ def add_post():
     new_post = Blog(post_title, post_body, owner)
     db.session.add(new_post)
     db.session.commit()
+
     # Redirect to that blog post
     return redirect("/blog?id={0}".format(new_post.id))
 
