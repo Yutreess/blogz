@@ -1,43 +1,12 @@
-from flask import Flask, request, redirect, render_template, session, flash
-from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+# Flask FUnctionality
+from flask import request, redirect, render_template, session, flash
+
+# Objects and app from local files
+from models import User, Blog
+from app import app, db
+
+# Regular Expression
 import re
-
-# App Initialization
-app = Flask(__name__)
-app.config['DEBUG'] = True
-app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://blogz:420Hornze!@localhost:8889/blogz"
-app.config['SQLALCHEMY_ECHO'] = True
-app.secret_key = 'YeetusYanLeetus'
-db = SQLAlchemy(app)
-
-# Blog Class
-class Blog(db.Model):
-  id = db.Column(db.Integer, primary_key=True)
-  title = db.Column(db.String(80))
-  body = db.Column(db.String(300))
-  post_time = db.Column(db.DateTime)
-  owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-
-  def __init__(self, title, body, owner, post_time=None):
-    self.title = title
-    if post_time is None:
-      post_time = datetime.utcnow()
-    self.post_time = post_time
-    self.body = body
-    self.owner = owner
-
-# User Class
-class User(db.Model):
-  id = db.Column(db.Integer, primary_key=True)
-  username = db.Column(db.String(80))
-  password = db.Column(db.String(30))
-  blogs = db.relationship('Blog', backref='owner')
-
-  def __init__(self, username, password):
-    self.username = username
-    self.password = password
-
 
 # Default to signup or login page if user is not logged in
 @app.before_request
@@ -107,7 +76,7 @@ def check_login():
   # If username and password are correct as in the database
   elif user and user.password == password:
     session['username'] = username
-    flash("Logged in!")
+    flash("Logged in as " + username)
   # If username is in database, but incorrect password
   elif user and user.password != password:
     password_error = 'Incorrect password'
@@ -220,7 +189,7 @@ def check_signup():
 
     # Remember user's login
     session['username'] = username
-    flash("Logged in!")
+    flash("Logged in as " + username)
     return redirect('/newpost')
 
 # New Post Form
@@ -262,8 +231,6 @@ def add_post():
 
     # Redirect to that blog post
     return redirect("/blog?id={0}".format(new_post.id))
-
-  
 
 if __name__ == "__main__":
   app.run()

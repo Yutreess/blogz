@@ -27,6 +27,10 @@
           <li><a href="/">Home</a></li>
         </ul>
     </nav>
+
+    {% if 'username' in session %}
+      <h5>{{session['username']}}</h5>
+    {% endif %}
     
     {% block content %}
 
