@@ -6,6 +6,12 @@
 <h4>by <a href="/blog?userId={{blog.owner.id}}">{{blog.owner.username}}</a></h4>
 
 <p>{{blog.body}}</p>
+<p>Likes: {{blog.likes}}</p>
+<br>
+<form action="/like" method="POST">
+    <input type="hidden" name="blog_id" value='{{blog.id}}'>
+    <input type="submit" value="Like">
+</form>
 {% endfor %}
 
 {% endblock %}

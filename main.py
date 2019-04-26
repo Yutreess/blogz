@@ -21,6 +21,8 @@ def require_login():
     flash("You need to be logged in to create a post or log out")
     return redirect('/login')
 
+# Begin /blog
+
 # Main Blog page
 @app.route('/blog', methods=['POST', 'GET'])
 def list_blogs():
@@ -46,12 +48,38 @@ def list_blogs():
     return render_template("blog.html", title="Blogz", page_header="Blog Entries",
     blogs=blogs)
 
+# End /blog
+
+# Begin /
+
 # Index or "Home" Page
 @app.route('/', methods=['POST', 'GET'])
 def index():
   # Get all usernames from all accounts
   users = User.query.order_by(User.username.asc()).all()
   return render_template("index.html", users=users)
+
+# End /
+
+# Begin /like
+@app.route('/like', methods=['POST'])
+def like_post():
+  # Find id of blog post
+  blog_id = request.form['blog_id']
+  # Find post to like
+  liked_post = Blog.query.filter_by(id=blog_id).first()
+  # Add like to post
+  liked_post.likes += 1
+  # Add and commit to db session
+  db.session.add(liked_post)
+  db.session.commit()
+
+  return redirect('/blog?id={0}'.format(blog_id))
+
+
+# End /like
+
+# Begin /login
 
 # Render Login Page
 @app.route('/login', methods=['GET'])
@@ -93,6 +121,10 @@ def check_login():
   else:
     return redirect('/newpost')
 
+# End /login
+
+# Begin /logout
+
 # Log out
 @app.route('/logout')
 def logout():
@@ -100,6 +132,10 @@ def logout():
     del session['username']
     flash("Logged Out!")
     return redirect('/blog')
+
+# End /logout
+
+# Begin /signup
 
 # Render Signup Page
 @app.route('/signup')
@@ -192,6 +228,10 @@ def check_signup():
     flash("Logged in as " + username)
     return redirect('/newpost')
 
+# End /signup
+
+# /newpost
+
 # New Post Form
 @app.route('/newpost', methods=['GET'])
 def render_form():
@@ -231,6 +271,8 @@ def add_post():
 
     # Redirect to that blog post
     return redirect("/blog?id={0}".format(new_post.id))
+
+# Run app
 
 if __name__ == "__main__":
   app.run()

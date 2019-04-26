@@ -11,6 +11,7 @@ class Blog(db.Model):
   body = db.Column(db.String(300))
   post_time = db.Column(db.DateTime)
   owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+  likes = db.Column(db.Integer)
 
   def __init__(self, title, body, owner, post_time=None):
     self.title = title
@@ -19,6 +20,7 @@ class Blog(db.Model):
     self.post_time = post_time
     self.body = body
     self.owner = owner
+    self.likes = 0
 
 # User Class
 class User(db.Model):
