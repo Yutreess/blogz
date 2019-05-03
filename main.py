@@ -16,12 +16,12 @@ from hash_utils import check_hash, hash_password
 def require_login():
   allowed_routes = ['login', 'check_login',
     'signup', 'check_signup',
-    'list_blogs', 'index']
+    'list_blogs', 'index', 'like']
   if request.endpoint not in allowed_routes \
     and 'username' not in session \
     and '/static/' not in request.path:
 
-    flash("You need to be logged in to create a post or log out")
+    flash("You need to be logged in to create and like posts")
     return redirect('/login')
 
 # Begin /blog
@@ -67,15 +67,20 @@ def index():
 # Begin /like
 @app.route('/like', methods=['POST'])
 def like_post():
-  # Find id of blog post
+  # Find id of blog post nad username
+  username = request.form['username']
   blog_id = request.form['blog_id']
-  # Find post to like
-  liked_post = Blog.query.filter_by(id=blog_id).first()
-  # Add like to post
-  liked_post.likes += 1
-  # Add and commit to db session
-  db.session.add(liked_post)
-  db.session.commit()
+
+  if 'username' in session:
+    # Find post to like
+    liked_post = Blog.query.filter_by(id=blog_id).first()
+    # Add like to post
+    liked_post.likes += 1
+    # Add and commit to db session
+    db.session.add(liked_post)
+    db.session.commit()
+  else:
+    flash("You must be logged in to like posts!")
 
   return redirect('/blog?id={0}'.format(blog_id))
 

@@ -9,6 +9,7 @@
 <p>Likes: {{blog.likes}}</p>
 <br>
 <form action="/like" method="POST">
+    <input type="hidden" name="username" value='{{blog.owner.username}}'>
     <input type="hidden" name="blog_id" value='{{blog.id}}'>
     <input type="submit" value="Like">
 </form>
