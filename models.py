@@ -4,6 +4,9 @@ from datetime import datetime
 # Import database object from app.py
 from app import db
 
+# Hashing passwords
+from hash_utils import hash_password
+
 # Blog Class
 class Blog(db.Model):
   id = db.Column(db.Integer, primary_key=True)
@@ -26,9 +29,9 @@ class Blog(db.Model):
 class User(db.Model):
   id = db.Column(db.Integer, primary_key=True)
   username = db.Column(db.String(80))
-  password = db.Column(db.String(30))
+  password_hash = db.Column(db.String(80))
   blogs = db.relationship('Blog', backref='owner')
 
   def __init__(self, username, password):
     self.username = username
-    self.password = password
+    self.password_hash = hash_password(password)

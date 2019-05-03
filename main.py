@@ -8,6 +8,9 @@ from app import app, db
 # Regular Expression
 import re
 
+# Hash passwords and check hashes
+from hash_utils import check_hash, hash_password
+
 # Default to signup or login page if user is not logged in
 @app.before_request
 def require_login():
@@ -97,14 +100,14 @@ def check_login():
 
   # Get User from database
   user = User.query.filter_by(username=username).first()
-  
-  # Check if username is empty
-  if not username:
-    uname_error = 'Please enter a Username'
+ 
   # If username and password are correct as in the database
-  elif user and user.password == password:
+  if user and check_hash(password, user.password_hash):
     session['username'] = username
     flash("Logged in as " + username)
+  # Check if username is empty
+  elif not username:
+    uname_error = 'Please enter a Username'
   # If username is in database, but incorrect password
   elif user and user.password != password:
     password_error = 'Incorrect password'
